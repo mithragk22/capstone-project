@@ -1,6 +1,6 @@
 # Capstone Project
 ### Status
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/mithragk22/hello/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/mithragk22/hello/tree/main)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/mithragk22/capstone-project/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/mithragk22/capstone-project/tree/master)
 
 ### Project Description
 In this project you will apply the skills and knowledge which were developed throughout the Cloud DevOps Nanodegree program. These include:
