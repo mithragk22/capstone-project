@@ -10,7 +10,7 @@ dockerpath=mithragk22/capstone
 # Step 2:  
 # Authenticate & tag
 echo "Docker ID and Image: $dockerpath"
-docker login -u="$DOCKERHUB_USERNAME" -p="$DOCKERHUB_PASSWORD"
+docker login -u="$DOCKERHUB_USERNAME" --password-stdin="$DOCKERHUB_PASSWORD"
 docker tag capstone $dockerpath
 
 # Step 3:
