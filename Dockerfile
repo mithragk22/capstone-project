@@ -1,4 +1,5 @@
 FROM python:3.7.3-stretch
+LABEL maintainer="Mithragk - Capstone project services"
 
 # Create a working directory
 WORKDIR /app
