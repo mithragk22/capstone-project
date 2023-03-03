@@ -34,7 +34,7 @@ commands:
             sudo ./aws/install
             
 jobs:
-  Lint-code:
+  lint-code:
     docker:
       - image: python:3.7.3-stretch    
     working_directory: ~/repo
@@ -60,7 +60,7 @@ jobs:
           command: |
             . devops/bin/activate
             make lint
-   create-docker:
+   create-docker-image:
       docker:
         - image:  circleci/golang:1.16
       working_directory: ~/repo
@@ -83,4 +83,6 @@ jobs:
 workflows:
   Build:
     jobs:
-      - Lint-code
+      - lint-code
+      - create-docker-image
+          requires: [lint-code]
