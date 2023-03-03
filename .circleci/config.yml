@@ -60,7 +60,7 @@ jobs:
           command: |
             . devops/bin/activate
             make lint
-   create-docker-image:
+  create-docker-image:
       docker:
         - image:  circleci/golang:1.16
       working_directory: ~/repo
@@ -84,5 +84,5 @@ workflows:
   Build:
     jobs:
       - lint-code
-      - create-docker-image
+      - create-docker-image:
           requires: [lint-code]
