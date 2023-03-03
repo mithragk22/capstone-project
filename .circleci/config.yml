@@ -73,16 +73,16 @@ jobs:
           version: 20.10.14
           docker_layer_caching: true      
       - run:
-          name: build image
+          name: Build image
           command: |
             sudo chmod +x run_docker.sh
             ./run_docker.sh ${DOCKER_USER} ${CIRCLE_WORKFLOW_ID:0:5}
       - run:
-          name: login
+          name: Docker login
           command: |
             echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
       - run:
-          name: push image to dockerhub
+          name: Push image to dockerhub
           command: |
             sudo chmod +x ./upload_docker.sh 
             ./upload_docker.sh ${DOCKER_USER} ${CIRCLE_WORKFLOW_ID:0:5}
