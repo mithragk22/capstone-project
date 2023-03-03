@@ -4,8 +4,37 @@
 #
 version: 2.1
 
+commands: 
+  awscli-install:
+    description: Install awscli
+    steps:
+      - run: 
+          name: Install aws cli
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            aws --version
+  kubectl-eksctl-install:
+    description: Install kubectl and eksctl
+    steps:
+      - run: 
+          name: Install kubectl and eksctl
+          command: |
+            curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
+            chmod +x ./kubectl
+            mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+            echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+            
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+            sudo mv /tmp/eksctl /usr/local/bin
+            
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            
 jobs:
-  Build:
+  Lint-code:
     docker:
       - image: python:3.7.3-stretch    
     working_directory: ~/repo
@@ -31,8 +60,27 @@ jobs:
           command: |
             . devops/bin/activate
             make lint
+   create-docker:
+      docker:
+        - image:  circleci/golang:1.16
+      working_directory: ~/repo
+      steps:
+        - checkout
+        - setup_remote_docker:
+            version: 20.10.14
+            docker_layer_caching: true
+        - run:
+            name: build image
+            command: |
+              sudo chmod +x run_docker.sh
+              ./run_docker.sh ${DOCKER_USER} ${CIRCLE_WORKFLOW_ID:0:5}
+        - run:
+            name: push image to dockerhub
+            command: |
+              sudo chmod +x ./upload_docker.sh 
+              ./upload_docker.sh ${DOCKER_USER} ${CIRCLE_WORKFLOW_ID:0:5}
 
 workflows:
   Build:
     jobs:
-      - Build
+      - Lint-code
