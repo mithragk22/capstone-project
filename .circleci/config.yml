@@ -123,14 +123,10 @@ jobs:
         - install-eksctl 
         - run:
             name: Create EKS Cluster
-            command: |                       
-              AZS=$(aws ec2 describe-availability-zones \
-              --query 'AvailabilityZones[].ZoneName' \
-              --region ${AWS_DEFAULT_REGION} \
-              --output text)
-              AZS=(${AZS[@]})              
-              eksctl create cluster --name=capstone-${CIRCLE_WORKFLOW_ID:0:5} \
-                --region ${AWS_DEFAULT_REGION} \                
+            command: |
+              eksctl create cluster \
+                --name capstone-${CIRCLE_WORKFLOW_ID:0:5} \
+                --region us-east-1 \              
                 --nodegroup-name eksNodeGroup \ 
                 --node-type t3.micro \
                 --nodes 2 \
