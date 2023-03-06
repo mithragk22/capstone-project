@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: capstone
-          image: mithragk/capstone
+          image: mithragk22/capstone
           imagePullPolicy: Always
           ports:
             - containerPort: 80
