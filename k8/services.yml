@@ -3,13 +3,14 @@ kind: Service
 metadata:
   name: capstone-services
   labels:
-    app: capstone 
+    app: capstone
+  namespace: capstone
 spec:
   selector:
     app: capstone
   ports:
     - name: http
-    - protocol: TCP
+      protocol: TCP
       port: 80
       targetPort: 80
   type: LoadBalancer
