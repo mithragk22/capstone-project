@@ -104,7 +104,7 @@ jobs:
             name: Create EKS Cluster
             command: |
               export AWS_REGION=us-east-1
-              export AZS=($(aws ec2 describe-availability-zones --query 'AvailabilityZones[].ZoneName' --output text --region $AWS_REGION))
+              export AZS=$(aws ec2 describe-availability-zones --query 'AvailabilityZones[].ZoneName' --output text --region $AWS_REGION)
               cat AZS[0]              
 
 workflows:
