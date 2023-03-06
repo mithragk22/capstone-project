@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: capstone-deployment
+  labels:
+    app: capstone
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: capstone
+  template:
+    metadata:
+      labels:
+        app: capstone
+        version: v1      
+    spec:
+      containers:
+        - name: capstone
+          image: mithragk/capstone
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: default-port
+          nodeSelector:
+        kubernetes.io/os: linux
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
