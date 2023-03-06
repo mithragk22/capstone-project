@@ -104,13 +104,15 @@ jobs:
             name: Create EKS Cluster
             command: |
               export AWS_REGION=us-east-1
-              echo $AWS_REGION                    
+              export AZS=($(aws ec2 describe-availability-zones --query 'AvailabilityZones[].ZoneName' --output text --region $AWS_REGION))
+              cat AZS[0]              
 
 workflows:
   Build:
     jobs:
-      - lint-code
-      - create-docker-image:
-          requires: [lint-code]
-      -  create-eks-cluster:
-          requires: [create-docker-image]
+      - create-eks-cluster
+      # - lint-code
+      # - create-docker-image:
+          # requires: [lint-code]
+      # - create-eks-cluster:
+         #  requires: [create-docker-image]
