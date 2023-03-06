@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: capstone-services
+  labels:
+    app: capstone 
+spec:
+  selector:
+    app: capstone
+  ports:
+    - name: http
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
