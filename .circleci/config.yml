@@ -111,11 +111,12 @@ jobs:
         - install-eksctl
         - run:
             name: Create EKS Cluster
-            command: |              
-              export AZS=$(aws ec2 describe-availability-zones --query 'AvailabilityZones[].ZoneName' --output text --region ${AWS_DEFAULT_REGION})
-              export AZS=(${AZS[@]})
-              cat ${AZS}
-              cat ${AZS[0]}
+            command: |   
+              cat ${AWS_DEFAULT_REGION}
+              cat $(aws ec2 describe-availability-zones --query 'AvailabilityZones[].ZoneName' --output text --region ${AWS_DEFAULT_REGION})
+              #export AZS=(${AZS[@]})
+              #cat ${AZS}
+              #cat ${AZS[0]}
 
 workflows:
   Build:
