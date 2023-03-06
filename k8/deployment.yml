@@ -23,7 +23,7 @@ spec:
           ports:
             - containerPort: 80
               name: default-port
-          nodeSelector:
+      nodeSelector:
         kubernetes.io/os: linux
       affinity:
         nodeAffinity:
