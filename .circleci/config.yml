@@ -113,7 +113,8 @@ jobs:
         - checkout
         - aws-cli/setup
         - kubernetes/install
-        - install-eksctl         
+        - install-eksctl
+        - install-kubectl     
         - run:
             name: Create EKS Cluster
             command: |                       
@@ -124,8 +125,7 @@ jobs:
                 --node-type t3.micro \
                 --nodes 2 \
                 --nodes-min 1 \
-                --nodes-max 2
-        - install-kubectl
+                --nodes-max 2        
         - run:
             name: Deploy image into eks-cluster
             command: |
