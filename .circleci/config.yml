@@ -114,6 +114,11 @@ jobs:
             command: |   
               cat ${AWS_DEFAULT_REGION}
               cat $(aws ec2 describe-availability-zones --query 'AvailabilityZones[].ZoneName' --output text --region ${AWS_DEFAULT_REGION})
+              AZS=$(aws ec2 describe-availability-zones \
+              --query 'AvailabilityZones[].ZoneName' \
+              --region ${AWS_DEFAULT_REGION} \
+              --output text)
+              cat $AZS
 
 workflows:
   Build:
