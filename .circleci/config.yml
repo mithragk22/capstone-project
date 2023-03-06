@@ -5,7 +5,7 @@
 version: 2.1
 
 commands: 
-  awscli-install:
+  install-awscli:
     description: Install awscli
     steps:
       - run: 
@@ -15,24 +15,30 @@ commands:
             unzip awscliv2.zip
             sudo ./aws/install
             aws --version
-  kubectl-eksctl-install:
-    description: Install kubectl and eksctl
+  install-eksctl:
+    description: Install eksctl tools
     steps:
       - run: 
-          name: Install kubectl and eksctl
+          name: Install eksctl
           command: |
-            curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.6/2022-03-09/bin/linux/amd64/kubectl
-            chmod +x ./kubectl
-            mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
-            echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
-            
+            apk add --update tar gzip  curl
             curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-            sudo mv /tmp/eksctl /usr/local/bin
+            mv /tmp/eksctl /usr/local/bin           
             
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
+  install-kubectl:
+    description: Install kubectl tools
+    steps:
+      - run: 
+          name: Install kubectl
+          command: |
+            sudo apt -y install tar gzip unzip curl
+            sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            sudo unzip awscliv2.zip
             sudo ./aws/install
-            
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            install -m 0755 kubectl /bin/kubectl
+            kubectl version --client
+
 jobs:
   lint-code:
     docker:
@@ -86,6 +92,26 @@ jobs:
           command: |
             sudo chmod +x ./upload_docker.sh 
             ./upload_docker.sh ${DOCKER_USER} ${CIRCLE_WORKFLOW_ID:0:5}
+
+  create-eks-cluster:
+      docker:
+        - image: python:3.7-alpine3.11
+      working_directory: ~/repo
+      steps:
+        - checkout
+        - install-eksctl        
+        - run:
+            name: Create EKS Cluster
+            command: |
+              export AWS_REGION='us-east-1'
+              export AZS=($(aws ec2 describe-availability-zones --query 'AvailabilityZones[].ZoneName' --output text --region $AWS_REGION))
+              eksctl create cluster --name=EKSCluster-${CIRCLE_WORKFLOW_ID:0:5} --region ${AWS_REGION} \
+                --version '1.22' --zones ${AZS[0]},${AZS[1]},${AZS[2]}  \
+                --nodegroup-name=DemoNodeGroup -m 1 -M 3 -N 3 \
+                --nodes-min 1 --nodes-max 2 \
+                --instance-types=t2.small --dry-run >> EKSConfig.yaml
+              cat EKSConfig.yaml
+              eksctl create cluster -f EKSConfig.yaml
 
 workflows:
   Build:
