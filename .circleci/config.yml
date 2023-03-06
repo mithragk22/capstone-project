@@ -4,9 +4,11 @@
 #
 version: 2.1
 
-orbs:  
+orbs:
+  aws-eks: circleci/aws-eks@0.2.3
+  kubernetes: circleci/kubernetes@0.7.0
   aws-cli: circleci/aws-cli@2.0.3
-
+  
 commands: 
   install-awscli:
     description: Install awscli
@@ -25,9 +27,10 @@ commands:
       - run: 
           name: Install eksctl
           command: |
-            apk add --update tar gzip  curl
             curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-            mv /tmp/eksctl /usr/local/bin
+            sudo mv /tmp/eksctl /usr/local/bin
+            eksctl version
+            aws --version
             
   install-kubectl:
     description: Install kubectl tools
@@ -104,6 +107,7 @@ jobs:
       steps:
         - checkout
         - aws-cli/setup
+        - kubernetes/install
         - install-eksctl
         - run:
             name: Create EKS Cluster
