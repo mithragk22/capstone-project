@@ -107,11 +107,10 @@ jobs:
               export AZS=($(aws ec2 describe-availability-zones --query 'AvailabilityZones[].ZoneName' --output text --region $AWS_REGION))
               eksctl create cluster --name=EKSCluster-${CIRCLE_WORKFLOW_ID:0:5} --region ${AWS_REGION} \
                 --version '1.22' --zones ${AZS[0]},${AZS[1]},${AZS[2]}  \
-                --nodegroup-name=DemoNodeGroup -m 1 -M 3 -N 3 \
-                --nodes-min 1 --nodes-max 2 \
+                --nodegroup-name=DemoNodeGroup -m 1 -M 3 -N 3 \                
                 --instance-types=t2.small --dry-run >> EKSConfig.yaml
               cat EKSConfig.yaml
-              eksctl create cluster -f EKSConfig.yaml
+              # eksctl create cluster -f EKSConfig.yaml
 
 workflows:
   Build:
