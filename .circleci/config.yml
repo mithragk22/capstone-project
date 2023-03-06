@@ -123,11 +123,11 @@ jobs:
         - install-eksctl 
         - run:
             name: Create EKS Cluster
-            command: |
+            command: |                       
               eksctl create cluster \
                 --name capstone-${CIRCLE_WORKFLOW_ID:0:5} \
-                --region us-east-1 \              
-                --nodegroup-name eksNodeGroup \ 
+                --region ${AWS_DEFAULT_REGION} \
+                --nodegroup-name worker-node \
                 --node-type t3.micro \
                 --nodes 2 \
                 --nodes-min 1 \
