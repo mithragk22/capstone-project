@@ -45,6 +45,18 @@ commands:
             curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
             install -m 0755 kubectl /bin/kubectl
             kubectl version --client
+  destroy-environment:
+    description: Destroy EKS cluster.
+    parameters:
+      Workflow_ID:
+        type: string
+        default: ${CIRCLE_WORKFLOW_ID:0:5}
+    steps:
+      - run:
+          name: Destroy cluster
+          when: on_fail
+          command: |
+            eksctl delete cluster --name=capstone-${CIRCLE_WORKFLOW_ID:0:5} --region=${AWS_DEFAULT_REGION}
 
 jobs:
   lint-code:
@@ -108,7 +120,7 @@ jobs:
         - checkout
         - aws-cli/setup
         - kubernetes/install
-        - install-eksctl
+        - install-eksctl 
         - run:
             name: Create EKS Cluster
             command: |                       
@@ -117,10 +129,9 @@ jobs:
               --region ${AWS_DEFAULT_REGION} \
               --output text)
               AZS=(${AZS[@]})              
-              eksctl create cluster --name=capstone-EKSCluster-${CIRCLE_WORKFLOW_ID:0:5}  \
-                --region ${AWS_DEFAULT_REGION} \
-                --version '1.22' --zones ${AZS[0]},${AZS[1]},${AZS[2]}  \
-                --nodegroup-name=eksNodeGroup -m 1 -M 3 -N 3 \ 
+              eksctl create cluster --name=capstone-${CIRCLE_WORKFLOW_ID:0:5} \
+                --region ${AWS_DEFAULT_REGION} \                
+                --nodegroup-name eksNodeGroup \ 
                 --node-type t3.micro \
                 --nodes 2 \
                 --nodes-min 1 \
@@ -131,14 +142,15 @@ jobs:
               curl -o kubectl https://amazon-eks.s3.us-east-1.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
               chmod +x ./kubectl
               mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin            
-              aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name capstone-EKSCluster-${CIRCLE_WORKFLOW_ID:0:5}
+              aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name capstone-${CIRCLE_WORKFLOW_ID:0:5}
               kubectl version --client
               export KUBECONFIG=~/.kube/config
               kubectl apply -f k8/services.yml
               kubectl apply -f k8/deployment.yml
               kubectl get svc
               kubectl get nodes
-              kubectl get pods --all-namespaces       
+              kubectl get pods --all-namespaces
+        - destroy-environment
 
 workflows:
   Build:
