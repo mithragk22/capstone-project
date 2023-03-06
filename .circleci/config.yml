@@ -112,11 +112,11 @@ jobs:
         - run:
             name: Create EKS Cluster
             command: |   
-              cat ${AWS_DEFAULT_REGION}              
-              cat $(aws ec2 describe-availability-zones \
+              echo ${AWS_DEFAULT_REGION}              
+              echo $(aws ec2 describe-availability-zones \
               --query 'AvailabilityZones[].ZoneName' \
               --region ${AWS_DEFAULT_REGION} \
-              --output text)              
+              --output text)
 
 workflows:
   Build:
