@@ -4,7 +4,6 @@ metadata:
   name: capstone-services
   labels:
     app: capstone
-  namespace: capstone
 spec:
   selector:
     app: capstone
