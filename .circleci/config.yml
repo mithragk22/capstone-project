@@ -167,8 +167,7 @@ jobs:
             echo '------------------------'
             echo 'loadbalancer url: '
             echo $loadbalancer
-            curl "http://$loadbalancer.us-east-1.elb.amazonaws.com/"    
-      - destroy-environment  
+            curl "http://$loadbalancer.us-east-1.elb.amazonaws.com/"          
 
 workflows:
   Build:
