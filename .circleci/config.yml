@@ -91,7 +91,7 @@ jobs:
           command: |
             DOCKERPATH="mithragk22/capstone"
             docker build --tag=capstone .
-            docker login -u vtm1983 -p "$DOCKERHUB_PASSWORD"
+            docker login -u mithragk22 -p "$DOCKERHUB_PASSWORD"
             docker image tag capstone $DOCKERPATH:latest
             docker image push $DOCKERPATH
             docker image tag capstone $DOCKERPATH:${CIRCLE_WORKFLOW_ID:0:5}
