@@ -127,7 +127,7 @@ jobs:
                 --nodes-min 1 \
                 --nodes-max 2        
               eksctl utils describe-stacks --region=${AWS_DEFAULT_REGION} --cluster=capstone-cluster-${CIRCLE_WORKFLOW_ID:0:5}
-              eksctl get cluster --name=capstone-cluster-${CIRCLE_WORKFLOW_ID:0:5}--region=${AWS_DEFAULT_REGION}
+              eksctl get cluster --name=capstone-cluster-${CIRCLE_WORKFLOW_ID:0:5} --region=${AWS_DEFAULT_REGION}
         - run:
             name: Deploy image into eks-cluster
             command: |                          
