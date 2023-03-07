@@ -113,11 +113,11 @@ jobs:
         - checkout
         - aws-cli/setup
         - kubernetes/install
-        - install-eksctl
-        - install-kubectl     
+        - install-eksctl        
         - run:
-            name: Create EKS Cluster
-            command: |                       
+            name: Create AWS EKS Cluster
+            command: |    
+              aws sts get-caller-identity                   
               eksctl create cluster \
                 --name capstone-cluster-${CIRCLE_WORKFLOW_ID:0:5} \
                 --region ${AWS_DEFAULT_REGION} \
@@ -126,23 +126,45 @@ jobs:
                 --nodes 2 \
                 --nodes-min 1 \
                 --nodes-max 2        
+              eksctl utils describe-stacks --region=${AWS_DEFAULT_REGION} --cluster=capstone-cluster-${CIRCLE_WORKFLOW_ID:0:5}
+              eksctl get cluster --name=capstone-cluster-${CIRCLE_WORKFLOW_ID:0:5}--region=${AWS_DEFAULT_REGION}
         - run:
             name: Deploy image into eks-cluster
-            command: |
+            command: |                          
               aws eks update-kubeconfig --name capstone-cluster-${CIRCLE_WORKFLOW_ID:0:5}
-              kubectl version --client
               kubectl create namespace capstone
               export KUBECONFIG=~/.kube/config
               kubectl apply -f k8/services.yml
               kubectl apply -f k8/deployment.yml
-              kubectl get deploy
+              kubectl describe deployment capstone-deployment
+              kubectl get deployments
               kubectl get svc
               kubectl get nodes
-              kubectl get pods --all-namespaces
+              kubectl get pods -l app=capstone
               kubectl config view
               kubectl get all -n capstone
               kubectl -n capstone describe service capstone
-        - destroy-environment   
+              kubectl get deployments
+        - destroy-environment
+
+  app-smoke-test:
+    executor: aws-eks/python3    
+    steps:
+      - checkout
+      - kubernetes/install-kubectl
+      - aws-cli/setup      
+      - run:
+          name: smoke-test
+          command: |                 
+            aws eks update-kubeconfig --name capstone-cluster-${CIRCLE_WORKFLOW_ID:0:5}
+            kubectl get svc
+            kubectl get nodes
+            kubectl get deployment
+            kubectl get pod
+            export loadbalancer=`kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68`
+            echo $loadbalancer
+            curl "http://$loadbalancer.us-west-2.elb.amazonaws.com/"
+      - destroy-environment
 
 workflows:
   Build:
@@ -152,3 +174,5 @@ workflows:
           requires: [lint-code]
       - create-deploy-eks-cluster:
           requires: [create-docker-image]
+      - app-smoke-test:   
+          requires: [create-deploy-eks-cluster]
