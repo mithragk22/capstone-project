@@ -127,16 +127,16 @@ jobs:
               export KUBECONFIG=~/.kube/config
               kubectl apply -f k8/services.yml
               kubectl apply -f k8/deployment.yml
-              echo '---------------------Deployment------------------------------------'
+              echo '------------------Describe Deployment---------------------'
               kubectl describe deployment capstone-deployment
-              echo '---------------------------------------------------------'
+              echo '------------------Get Deployment-----------------------------'
               kubectl get deployments
-              echo '--------------------svc Nodes-------------------------------------'
+              echo '------------------svc,nodes--------------------------------'
               kubectl get svc
               kubectl get nodes
-              echo '--------------------pods-------------------------------------'
+              echo '-------------------pods-------------------------------------'
               kubectl get pods --all-namespaces
-              echo '---------------------------------------------------------'
+              echo '-------------------config view------------------------------'
               kubectl config view                         
         - destroy-environment
 
@@ -153,11 +153,12 @@ jobs:
             chmod +x ./kubectl
             mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin             
             aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name capstone-cluster-${CIRCLE_WORKFLOW_ID:0:5}
+            echo '-------------svc,Nodes---------------'
             kubectl get svc
             kubectl get nodes
-            echo '--------- Nodes ---------------'
+            echo '-------------Deployment---------------'
             kubectl get deployment
-            echo '---------- Deployment ----------------'
+            echo '--------------pod ------------------'
             kubectl get pod
             echo '-------------Load Balancer-----------------'
             kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68
@@ -178,13 +179,16 @@ jobs:
             kubectl rollout restart deployment capstone
             echo "----Rolling Deployment History-----"            
             kubectl rollout history deployment/capstone
-            echo "Replicas History"  
-            kubectl get rs            
+            echo "---------Replicas History-----------"  
+            kubectl get rs    
+            echo '---------- svc,Nodes ---------------'        
             kubectl get svc
             kubectl get nodes
+            echo '---------- Deployment --------------'
             kubectl get deployment
+            echo '---------- pod ---------------------'
             kubectl get pod
-            echo "----Testing App after rolling deployment----""
+            echo "----load balancer after rolling deployment----""
             export loadbalancer=`kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68`
             echo $loadbalancer            
             # curl "http://$loadbalancer.us-east-1.elb.amazonaws.com/"
