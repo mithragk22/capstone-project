@@ -15,7 +15,7 @@ In this project you will apply the skills and knowledge which were developed thr
 
 # Please refer the below links as part of project submission,
 - Screenshots of various stages :
-- GIT url: 
+- GIT url: https://github.com/mithragk22/project-capstone
 
 
 
