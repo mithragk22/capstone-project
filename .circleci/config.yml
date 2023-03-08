@@ -162,8 +162,12 @@ jobs:
             kubectl get pod
             echo '-------------Load Balancer-----------------'
             kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68
-            echo "----Testing App after deployment----"
-            kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68            
+            echo "----Testing App after deployment----"           
+            LB=$(kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68 )
+            LB_URL=http://${LB_URL}.us-east-1.elb.amazonaws.com/
+            echo ${LB_URL}             
+            curl -s ${LB_URL}
+      - destroy-environment
 
   eks-rolling-deployment:
     executor: aws-eks/python3
