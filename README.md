@@ -14,7 +14,7 @@ In this project you will apply the skills and knowledge which were developed thr
 - Testing the application
 
 # Please refer the below links as part of project submission,
-- Screenshots of various stages :
+- Screenshots of various stages : https://github.com/mithragk22/project-capstone/tree/master/Screenshots
 - GIT url: https://github.com/mithragk22/project-capstone
 
 Screenshots:
