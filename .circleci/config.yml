@@ -128,7 +128,7 @@ jobs:
               kubectl apply -f k8/services.yml
               kubectl apply -f k8/deployment.yml
               echo '------------------Describe Deployment---------------------'
-              kubectl describe deployment capstone-deployment
+              kubectl describe deployment capstone
               echo '------------------Get Deployment-----------------------------'
               kubectl get deployments
               echo '------------------svc,nodes--------------------------------'
