@@ -145,7 +145,8 @@ jobs:
     steps:
       - checkout
       - kubernetes/install-kubectl
-      - aws-cli/setup      
+      - aws-cli/setup     
+      - install-eksctl 
       - run:
           name: smoke-test
           command: |
