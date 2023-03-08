@@ -165,8 +165,9 @@ jobs:
             kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68
             echo "----Testing App after deployment----"           
             LB=$(kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68 )
-            LB_URL=http://${LB}.us-east-1.elb.amazonaws.com/
+            LB_URL=http://${LB}us-east-1.elb.amazonaws.com/
             echo ${LB_URL}
+            curl -s LB_URL
       - destroy-environment
 
   eks-rolling-deployment:
@@ -193,7 +194,11 @@ jobs:
             echo '---------- pod ---------------------'
             kubectl get pod
             echo "----load balancer after rolling deployment----"
-            kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68            
+            kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68
+            LB=$(kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68 )
+            LB_URL=http://${LB}us-east-1.elb.amazonaws.com/
+            echo ${LB_URL}
+            curl -s LB_URL         
       - destroy-environment
 
 workflows:
