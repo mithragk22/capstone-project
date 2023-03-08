@@ -10,13 +10,12 @@ In this project you will apply the skills and knowledge which were developed thr
 - Linting the application
 - Build and push docker image into Docker hub
 - Working with CloudFormation to deploy clusters
-- Building Kubernetes clusters
 - Deploying image into EKS cluster
 - Testing the application
 
 # Please refer the below links as part of project submission,
-Screenshots of various stages :
-GIT url: 
+- Screenshots of various stages :
+- GIT url: 
 
 
 
