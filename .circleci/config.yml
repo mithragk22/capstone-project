@@ -198,10 +198,4 @@ workflows:
     jobs:     
       - lint-code
       - create-docker-image:
-          requires: [lint-code]
-      - create-deploy-eks-cluster:
-          requires: [create-docker-image]
-      - app-smoke-test:   
-          requires: [create-deploy-eks-cluster]
-      - eks-rolling-deployment:   
-          requires: [app-smoke-test]
+          requires: [lint-code]      
