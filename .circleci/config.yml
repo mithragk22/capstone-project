@@ -162,11 +162,9 @@ jobs:
             echo '--------------pod ------------------'
             kubectl get pod
             echo '-------------Load Balancer-----------------'
-            kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68   
-             echo '-------------Load Balancer without cut-----------------' 
-            kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}'   
-             echo '-------------Load Balancer ip-----------------'
-            kubectl get svc capstone -n capstone -o custom-columns="NAME:.metadata.name,IP ADDRESS:.status.loadBalancer.ingress[*].ip"    
+            kubectl get svc -o jsonpath='{$.items[*].status.loadBalancer}' | cut -b 26-68
+            echo '-------------Load Balancer ip-----------------'
+            kubectl get svc -o custom-columns="NAME:.metadata.name,IP ADDRESS:.status.loadBalancer.ingress[*].ip"    
       - destroy-environment
 
   destory-cluster:
