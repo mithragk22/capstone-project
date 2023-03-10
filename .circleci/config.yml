@@ -138,7 +138,7 @@ jobs:
               kubectl get pods --all-namespaces
               echo '-------------------config view------------------------------'
               kubectl config view                         
-        - destroy-environment
+        - destroy-environment  
 
   app-smoke-test:
     executor: aws-eks/python3    
@@ -162,8 +162,24 @@ jobs:
             echo '--------------pod ------------------'
             kubectl get pod
             echo '-------------Load Balancer-----------------'
-            kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68           
+            kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}' | cut -b 26-68   
+             echo '-------------Load Balancer without cut-----------------' 
+            kubectl get svc -o jsonpath='{ $.items[*].status.loadBalancer}'   
+             echo '-------------Load Balancer ip-----------------'
+            kubectl get svc capstone -n capstone -o custom-columns="NAME:.metadata.name,IP ADDRESS:.status.loadBalancer.ingress[*].ip"    
       - destroy-environment
+
+  destory-cluster:
+    executor: aws-eks/python3    
+    steps:
+      - checkout
+      - kubernetes/install-kubectl
+      - aws-cli/setup     
+      - install-eksctl                 
+      - run:
+          name: Destroy cluster         
+          command: |
+            eksctl delete cluster --name=capstone-cluster-${CIRCLE_WORKFLOW_ID:0:5} --region=${AWS_DEFAULT_REGION}
 
   eks-rolling-deployment:
     executor: aws-eks/python3
@@ -203,5 +219,7 @@ workflows:
           requires: [create-docker-image]
       - app-smoke-test:   
           requires: [create-deploy-eks-cluster]
-      - eks-rolling-deployment:   
+      - destory-cluster:
           requires: [app-smoke-test]
+      # - eks-rolling-deployment:   
+         #  requires: [app-smoke-test]
